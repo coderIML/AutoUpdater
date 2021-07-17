@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <appSettings>
+    <!--服务器更新网站所在路径地址（更新包服务端程序，用于计算更新包大小等服务）
+      默认意味着，所有的更新包和更新配置都在此路径下面
+      此路径下包含服务端网站程序和一个服务端配置文件以及一个文件夹
+      （此文件夹用于保存待更新压缩包和本地临时保存下载后的压缩包文件夹名称）
+      -->
+    <add key="url" value="http://47.96.26.231:12612/DataMachineControlPanel/" />
+    <!--此文件夹或路径（默认就一个文件夹名称）
+        在服务器上它用于保存待更新压缩包，
+        在本地执行程序同目录下临时保存下载后的压缩包文件夹名称-->
+    <add key="file_path" value="DataMachineControlPanel" />
+    <!--客户端上次更新的服务器端日期,用于对比服务器和客户端，当不一致则更新-->
+    <add key="up_date" value="2019-02-28" />
+    <!--本地程序更新的最近时间,包含小时分钟秒-->
+    <add key="up_exec_lasted_date" value="" />
+    <!--服务端XML配置文件名称，此文件放在网站目录的file_path指定的目录下面-->
+    <add key="server_xml_url" value="AutoUpdater.xml" />
+    <!--exe程序运行的文件名称，包含后缀.exe-->
+    <add key="application" value="FX_FactoryDataAcquisition_Project.exe" />
+    <!--exe程序运行的文件名称正则格式,其中括号是用于捕捉文件名称的-->
+    <add key="application_exe_file_name_reg" value="^([-_a-z0-9\u4e00-\u9fa5]+)\.exe$" />
+    <!--更新程序的运行图标（更新程序运行的时候，会在电脑底部状态栏有图标呈现的）-->
+    <add key="application_ico_file_name" value="ico.ico" />
+    <!--配置为1，则自动更新，配置为0则不自动更新-->
+    <add key="auto_backup" value="1" />
+  </appSettings>
+</configuration>
