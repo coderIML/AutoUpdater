@@ -255,7 +255,7 @@ namespace AutoUpdater
         }
 
         /// <summary>
-        /// 关闭当前更新exe,执行实例exe
+        /// 关闭当前更新exe,执行实例exe 
         /// </summary>
         /// <returns>true:更新成功,false:更新失败</returns>
         private bool UpdaterClose()
