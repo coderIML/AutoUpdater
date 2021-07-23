@@ -36,6 +36,7 @@ namespace AutoUpdater
             InitializeComponent();
             if (!PreCheckForStartUpater())
             {
+                //直接退出应用程序,此处不能使用Close方法将会报异常!
                 Application.Exit();
             }
             start_path = Application.StartupPath;
