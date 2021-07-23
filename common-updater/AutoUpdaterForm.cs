@@ -1,12 +1,12 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright company="工品一号" file="AutoUpdaterForm.cs">
+// <copyright company="gpyh" file="AutoUpdaterForm.cs">
 //  Copyright (c)  V1.0.0.0  
-//  创建作者:   刘少林
-//  创建时间:   2021-06-29 10:31:54
-//  功能描述:   更新程序执行的winform窗体类，可能包含进度条等可视化效果
-//  历史版本:
-//          2021-06-29 刘少林 更新程序执行的winform窗体类，可能包含进度条等可视化效果
-//          2021-07-17 刘少林 新增自动备份，针对本次更新的文件执行备份  
+//  creator:   arison
+//  create time:   2021-06-29 10:31:54
+//  function description:   auto apdate winform exe application，contain process bar.
+//  history version:
+//          2021-06-29 arison auto apdate winform exe application，contain process bar.
+//          2021-07-17 arison auto backup origin version，for being updated version!  
 // </copyright>
 //-----------------------------------------------------------------------
 using System;
@@ -26,7 +26,7 @@ using System.Text.RegularExpressions;
 namespace AutoUpdater
 {
     /// <summary>
-    /// 更新程序执行的winform窗体类，可能包含进度条等可视化效果
+    /// auto apdate winform exe application，contain process bar.
     /// </summary>
     public partial class AutoUpdaterForm : Form
     {
@@ -36,57 +36,57 @@ namespace AutoUpdater
             InitializeComponent();
             if (!PreCheckForStartUpater())
             {
-                //直接退出应用程序,此处不能使用Close方法将会报异常!
+                //exit application,if u use the method Close,the application will throw exception!
                 Application.Exit();
             }
             start_path = Application.StartupPath;
         }
         /// <summary>
-        /// 实例化webclient
+        /// instantiate webclient
         /// </summary>
         private WebClient downWebClient = new WebClient();
         /// <summary>
-        /// 服务器地址
+        /// server address
         /// </summary>
         private static string serverUpdateHttpAddress;
         /// <summary>
-        /// zip文件的大小
+        /// zip file size
         /// </summary>
         private static long size;
         /// <summary>
-        /// zip的压缩包个数
+        /// zip file count
         /// </summary>
         private static int count;
         /// <summary>
-        /// 压缩包名称集合
+        /// compressed file names' set
         /// </summary>
         private static string[] fileNames;
         /// <summary>
-        /// 压缩包名称
+        /// compressed package file name
         /// </summary>
         private static string fileName;
         /// <summary>
-        /// 第几个压缩包
+        /// which compressed package
         /// </summary>
         private static int num;
         /// <summary>
-        /// 下载的总字节数
+        /// download all bytes
         /// </summary>
         private static long upsize;
         /// <summary>
-        /// 当前下载的文件字节数
+        /// current download file bytes
         /// </summary>
         private static long filesize;
 
         private static string localUpdaterFilePath = null;
 
         /// <summary>
-        /// 本地待执行的程序名称（不包含后缀.exe的文件名称,且不包含路径）
+        /// local executable application's name(donot contain extension,eg:.exe,and do not contain file path)
         /// </summary>
         private static string applicationName = null;
 
         /// <summary>
-        /// 本地待执行的程序名称（包含后缀.exe的文件名称,不包含路径）
+        /// local executable application's name(contain extension,eg:.exe,and do not contain file path)
         /// </summary>
         private static string application = null;
 
