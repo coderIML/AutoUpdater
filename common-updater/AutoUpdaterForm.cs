@@ -86,7 +86,7 @@ namespace AutoUpdater
         private static string applicationName = null;
 
         /// <summary>
-        /// local executable application's name(contain extension,eg:.exe,and do not contain file path)
+        /// local executable application's name(contain extension,eg:.exe,and do not contain file path) 
         /// </summary>
         private static string application = null;
 
