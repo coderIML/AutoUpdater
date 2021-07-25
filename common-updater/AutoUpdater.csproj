@@ -57,6 +57,7 @@
     <Compile Include="AutoUpdaterForm.Designer.cs">
       <DependentUpon>AutoUpdaterForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Common\Variables.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\HelperLog.cs" />

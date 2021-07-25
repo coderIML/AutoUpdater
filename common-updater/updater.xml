@@ -5,25 +5,62 @@
       默认意味着，所有的更新包和更新配置都在此路径下面
       此路径下包含服务端网站程序和一个服务端配置文件以及一个文件夹
       （此文件夹用于保存待更新压缩包和本地临时保存下载后的压缩包文件夹名称）
+      the updated website's server address(updated server application,and calc the updated package size service etc)
+      by default,all of the updated package and updated config file will be saved into the path
+      the server path contain server website,server config and a file folder
+      (the file folder will save the updated compressed package,
+      if it is used in the local,it will save the compressed zip packages)
       -->
     <add key="url" value="http://47.96.26.231:12612/DataMachineControlPanel/" />
     <!--此文件夹或路径（默认就一个文件夹名称）
         在服务器上它用于保存待更新压缩包，
-        在本地执行程序同目录下临时保存下载后的压缩包文件夹名称-->
+        在本地执行程序同目录下临时保存下载后的压缩包文件夹名称
+        file folder and path(default it's file folder name)
+        it will save the updated compressed zip package in the server
+        it will save the downloaded zip package files in the client 
+        -->
     <add key="file_path" value="DataMachineControlPanel" />
-    <!--客户端上次更新的服务器端日期,用于对比服务器和客户端，当不一致则更新-->
+    <!--
+    客户端上次更新的服务器端日期,用于对比服务器和客户端，当不一致则更新
+    client's lasted time,use it compare the server updated time,if them are not equal,then update execute 
+    -->
     <add key="up_date" value="2019-02-28" />
-    <!--本地程序更新的最近时间,包含小时分钟秒-->
+    <!--
+    本地程序更新的最近时间,包含小时分钟秒
+    local application's latest updated time,and contain hour,miniute and second!
+    -->
     <add key="up_exec_lasted_date" value="" />
-    <!--服务端XML配置文件名称，此文件放在网站目录的file_path指定的目录下面-->
+    <!--
+    服务端XML配置文件名称，此文件放在网站目录的file_path指定的目录下面
+    the remote server config file name,it is saved the url indicated file path
+    -->
     <add key="server_xml_url" value="AutoUpdater.xml" />
-    <!--exe程序运行的文件名称，包含后缀.exe-->
+    <!--
+    exe程序运行的文件名称，包含后缀.exe
+    udpated application file name,and contain the file name's extension
+    -->
     <add key="application" value="FX_FactoryDataAcquisition_Project.exe" />
-    <!--exe程序运行的文件名称正则格式,其中括号是用于捕捉文件名称的-->
+    <!--
+    exe程序运行的文件名称正则格式,其中括号是用于捕捉文件名称的
+    updated application file name's regex expressions,and the bracket's content will be captured
+    -->
     <add key="application_exe_file_name_reg" value="^([-_a-z0-9\u4e00-\u9fa5]+)\.exe$" />
-    <!--更新程序的运行图标（更新程序运行的时候，会在电脑底部状态栏有图标呈现的）-->
+    <!--
+    更新程序的运行图标（更新程序运行的时候，会在电脑底部状态栏有图标呈现的）
+    updated application icon(when application run,computer status bar will show the icon)
+    -->
     <add key="application_ico_file_name" value="ico.ico" />
-    <!--配置为1，则自动更新，配置为0则不自动更新-->
+    <!--
+    配置为1，则自动更新，配置为0则不自动更新
+    value is 1 the application will auto backup updated files or do not
+    -->
     <add key="auto_backup" value="1" />
+    <!--
+    是否中文环境运行,配置为1，则中文环境（呈现都是中文内容），否则为英文环境执行,弹框将会英文显示
+    whether or not chinese language application，the value is 1,
+    chinese excuatable environment(english popup dialog),or english 
+    (english popup dialog)
+    -->
+    <add key="is_cn" value="1" />
   </appSettings>
 </configuration>

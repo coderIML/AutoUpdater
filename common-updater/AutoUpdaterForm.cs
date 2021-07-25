@@ -128,19 +128,23 @@ namespace AutoUpdater
 
         /// <summary>
         /// 从服务端获取的服务端更新时间
+        /// get updated time from the server
         /// </summary>
         /// <remarks>
         /// 客户端根据这个时间和本地时间做比较，来确定是否更新客户端的程序
+        /// client will compare local time and server time,whether or not update client application
         /// </remarks>
         private static string theServerUpdateDate = null;
 
         /// <summary>
         /// 客户端上次更新的日期
+        /// the client last updated time 
         /// </summary>
         private static string thelocalUpdateDate = null;
 
         /// <summary>
         /// 本地更新配置文件全路径
+        /// local updated full path of config file
         /// </summary>
         public static string LocalUpdaterFilePath
         {
@@ -156,9 +160,16 @@ namespace AutoUpdater
 
         /// <summary>
         /// 本地更新updater.xml配置文件对象
+        /// xml document object for local config file(updater.xml)
         /// </summary>
         private static XmlDocument document = null;
 
+        /// <summary>
+        /// 更新程序第一次加载窗体事件
+        /// updated application first loaded the form event
+        /// </summary>
+        /// <param name="sender">sender</param>
+        /// <param name="e">e</param>
         private void AutoUpdater_Load(object sender, EventArgs e)
         {
             if (DateTime.Compare(Convert.ToDateTime(theServerUpdateDate, CultureInfo.InvariantCulture),
@@ -186,12 +197,15 @@ namespace AutoUpdater
         }
 
         /// <summary>
-        /// 窗体初始化预先检验更新初始条件十分满足
+        /// 窗体初始化预先检验更新初始条件是否满足
+        /// before init the form,check the condition whether or not is okay
         /// </summary>
-        /// <returns>true:满足,false:不满足</returns>
+        /// <returns>
+        /// true:满足,false:不满足
+        /// true:can execute updated application,false:can not do
+        /// </returns>
         private bool PreCheckForStartUpater()
         {
-            #region 更新执行初始验证，不通过将退出更新程序
             if (!File.Exists(LocalUpdaterFilePath))
             {
                 MessageBox.Show("本地更新配置文件updater.xml不存在，无法执行更新程序!");
@@ -290,7 +304,6 @@ namespace AutoUpdater
                 return false;
             }
             return true;
-            #endregion 
         }
 
         /// <summary>
