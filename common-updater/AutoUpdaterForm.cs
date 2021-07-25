@@ -1,11 +1,22 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright company="gpyh" file="AutoUpdaterForm.cs">
+// <版权 开源 文件名称="AutoUpdaterForm.cs">
+//  版本 (c)  V1.0.0.0  
+//  创建者:   少林
+//  创建时间:   2021-06-29 10:31:54
+//  功能描述:   自动更新winforms程序客户端，可包含进度条等显示
+//  历史版本:
+//          2021-06-29 少林 自动更新winforms程序客户端，可包含进度条等显示
+//          2021-07-17 少林 对需要被更新的文件进行自动备份
+// </copyright>
+//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+// <copyright open code source file="AutoUpdaterForm.cs">
 //  Copyright (c)  V1.0.0.0  
 //  creator:   arison
 //  create time:   2021-06-29 10:31:54
-//  function description:   auto apdate winform exe application，contain process bar.
+//  function description:   auto update winform exe application，contain process bar.
 //  history version:
-//          2021-06-29 arison auto apdate winform exe application，contain process bar.
+//          2021-06-29 arison auto update winform exe application，contain process bar etc.
 //          2021-07-17 arison auto backup origin version，for being updated version!  
 // </copyright>
 //-----------------------------------------------------------------------
@@ -26,7 +37,8 @@ using System.Text.RegularExpressions;
 namespace AutoUpdater
 {
     /// <summary>
-    /// auto apdate winform exe application，contain process bar.
+    /// 自动更新winforms程序客户端，可包含进度条等显示
+    /// auto update winform exe application，contain process bar.
     /// </summary>
     public partial class AutoUpdaterForm : Form
     {
@@ -36,56 +48,80 @@ namespace AutoUpdater
             InitializeComponent();
             if (!PreCheckForStartUpater())
             {
+                //退出程序，如果使用窗体的Close事件，这个程序将会抛出异常
                 //exit application,if u use the method Close,the application will throw exception!
                 Application.Exit();
             }
             start_path = Application.StartupPath;
         }
         /// <summary>
+        /// 实例化webclient对象
         /// instantiate webclient
         /// </summary>
         private WebClient downWebClient = new WebClient();
+
         /// <summary>
+        /// 服务端地址
         /// server address
         /// </summary>
         private static string serverUpdateHttpAddress;
+
         /// <summary>
+        /// 压缩文件大小
         /// zip file size
         /// </summary>
         private static long size;
+
         /// <summary>
+        /// 压缩文件的数量
         /// zip file count
         /// </summary>
         private static int count;
+
         /// <summary>
+        /// 压缩文件的名称集合
         /// compressed file names' set
         /// </summary>
         private static string[] fileNames;
+
         /// <summary>
+        /// 被压缩文件的名称
         /// compressed package file name
         /// </summary>
         private static string fileName;
+
         /// <summary>
+        /// 第几个压缩包
         /// which compressed package
         /// </summary>
         private static int num;
+
         /// <summary>
+        /// 下载的文件总大小
         /// download all bytes
         /// </summary>
         private static long upsize;
+
         /// <summary>
+        /// 当前下载的文件大小
         /// current download file bytes
         /// </summary>
         private static long filesize;
 
+        /// <summary>
+        /// 本地更新文件路径
+        /// local updated files' path
+        /// </summary>
         private static string localUpdaterFilePath = null;
 
         /// <summary>
+        /// 本地可执行文件的名称（不包含扩展名称，也不包含文件路径）
         /// local executable application's name(donot contain extension,eg:.exe,and do not contain file path)
         /// </summary>
         private static string applicationName = null;
 
         /// <summary>
+        /// 本地可执行文件的名称（包含扩展名称，不包含文件路径）
         /// local executable application's name(contain extension,eg:.exe,and do not contain file path)  
         /// </summary>
         private static string application = null;
@@ -93,7 +129,9 @@ namespace AutoUpdater
         /// <summary>
         /// 从服务端获取的服务端更新时间
         /// </summary>
-        /// <remarks>客户端根据这个时间和本地时间做比较，来确定是否更新客户端的程序</remarks>
+        /// <remarks>
+        /// 客户端根据这个时间和本地时间做比较，来确定是否更新客户端的程序
+        /// </remarks>
         private static string theServerUpdateDate = null;
 
         /// <summary>
