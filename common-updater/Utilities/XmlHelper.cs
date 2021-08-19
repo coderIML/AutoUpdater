@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright company="工品一号" file="XmlHelper.cs">
+// <copyright 开源 file="XmlHelper.cs">
 //  Copyright (c)  V1.0.0.0  
 //  创建作者:   刘少林
 //  创建时间:   2017-02-05 13:23:21
@@ -19,7 +19,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System;
-using System.Windows.Forms;
 using System.Xml;
 
 namespace AutoUpdater

@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright company="工品一号" file="LogHelper.cs">
+// <copyright 开源 file="LogHelper.cs">
 //  Copyright (c)  V1.0.0.0  
 //  创建作者:   刘少林
 //  创建时间:   2017-02-05 13:23:21
@@ -275,19 +275,19 @@ namespace AutoUpdater
                 //if exception is not exist or log content is empty,the Write method will be not runned
                 string timeString = DateTime.Now.ToString();
                 StringBuilder append = new StringBuilder();
-                append.AppendFormat("时间:{0}\r\n", timeString);
+                append.Append(CodeTextentBlock.Time).AppendFormat(":{0}\r\n", timeString);
                 if (!string.IsNullOrEmpty(content))
                 {
-                    append.AppendFormat("内容:{0}\r\n", content);
+                    append.Append(CodeTextentBlock.Content).AppendFormat(":{0}\r\n", content);
                 }
                 if (!string.IsNullOrEmpty(methodInfo))
                 {
-                    append.AppendFormat("方法信息:{0}\r\n", methodInfo);
+                    append.Append(CodeTextentBlock.MethodInformation).AppendFormat(":{0}\r\n", methodInfo);
                 }
                 if (exception != null)
                 {
-                    append.AppendFormat("异常:{0}\r\n", exception.Message);
-                    append.AppendFormat("堆栈:{0}\r\n", exception.StackTrace);
+                    append.Append(CodeTextentBlock.ExceptionMessage).AppendFormat(":{0}\r\n", exception.Message);
+                    append.Append(CodeTextentBlock.Stack).AppendFormat(":{0}\r\n", exception.StackTrace);
                 }
                 append.Append("****************************");
                 WriteLog(append.ToString(), type, savePath);
@@ -450,7 +450,7 @@ namespace AutoUpdater
             }
             catch
             {
-                
+
             }
         }
     }

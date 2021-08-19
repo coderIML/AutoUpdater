@@ -208,25 +208,20 @@ namespace AutoUpdater
         {
             if (!File.Exists(LocalUpdaterFilePath))
             {
-                MessageBox.Show("本地更新配置文件updater.xml不存在，无法执行更新程序!");
+                MessageBox.Show(CodeTextentBlock.UpdaterConfigIsNotFound);
                 return false;
             }
-            if (document == null)
+            try
             {
-                document = new XmlDocument();
-                try
-                {
-                    document.Load(LocalUpdaterFilePath);
-                }
-                catch (Exception ex)
-                {
-                    LogHelper.Write(ex);
-                    MessageBox.Show("updater.xml格式非法，无法加载!");
-                    document = null;
-                    return false;
-                }
+                XmlHelper.Init(LocalUpdaterFilePath);
             }
-            string iconFilePath = start_path + "\\" + GetConfigValue("application_ico_file_name");
+            catch (Exception ex)
+            {
+                LogHelper.Write(ex);
+                MessageBox.Show(CodeTextentBlock.LoadedUpdaterConfigIsException);
+                return false;
+            }
+            string iconFilePath = start_path + "\\" + XmlHelper.GetConfigValue("application_ico_file_name");
             try
             {
                 if (File.Exists(iconFilePath))
@@ -237,50 +232,50 @@ namespace AutoUpdater
             catch (Exception ex)
             {
                 LogHelper.Write(ex);
-                MessageBox.Show("加载更新程序ICON文件异常!");
+                MessageBox.Show(CodeTextentBlock.LoadedUpdaterIconFileIsException);
                 return false;
             }
             //服务器更新包HTTP地址
-            serverUpdateHttpAddress = GetConfigValue("url");
+            serverUpdateHttpAddress = XmlHelper.GetConfigValue("url");
             if (string.IsNullOrEmpty(serverUpdateHttpAddress))
             {
-                MessageBox.Show("服务器url路径非法，无法执行更新程序");
+                MessageBox.Show(CodeTextentBlock.ServerUrlIsInvalid);
                 return false;
             }
             //服务器的更新时间
             theServerUpdateDate = GetTheLastUpdateTime();
             if (string.IsNullOrEmpty(theServerUpdateDate))
             {
-                MessageBox.Show("服务器更新时间为空，无法执行更新程序");
+                MessageBox.Show(CodeTextentBlock.ServerUpdateTimeIsEmpty);
                 return false;
             }
             DateTime tmpTime;
             if (!DateTime.TryParse(theServerUpdateDate, out tmpTime))
             {
-                MessageBox.Show("服务器更新时间格式不正确，无法执行更新程序");
+                MessageBox.Show(CodeTextentBlock.ServerUpdateTimeFormatIsInvalid);
                 return false;
             }
             //当前的更新时间
-            thelocalUpdateDate = GetConfigValue("up_date");
+            thelocalUpdateDate = XmlHelper.GetConfigValue("up_date");
             if (string.IsNullOrEmpty(thelocalUpdateDate))
             {
-                MessageBox.Show("本地更新时间为空，无法执行更新程序");
+                MessageBox.Show(CodeTextentBlock.LocalUpdateTimeIsEmpty);
                 return false;
             }
             if (!DateTime.TryParse(thelocalUpdateDate, out tmpTime))
             {
-                MessageBox.Show("本地更新时间格式不正确，无法执行更新程序");
+                MessageBox.Show(CodeTextentBlock.LocalUpdatedTimeFormatIsInvalid);
                 return false;
             }
-            application = GetConfigValue("application");
+            application = XmlHelper.GetConfigValue("application");
             if (string.IsNullOrEmpty(application))
             {
-                MessageBox.Show("本地更新配置application节点未设置，无法执行更新程序");
+                MessageBox.Show(CodeTextentBlock.LocalUpdatedTimeFormatIsInvalid);
                 Close();
                 return false;
             }
             //更新待启动应用程序名称（不包含后缀.exe）
-            string applictionNameReg = GetConfigValue("application_exe_file_name_reg");
+            string applictionNameReg = XmlHelper.GetConfigValue("application_exe_file_name_reg");
             if (string.IsNullOrEmpty(applictionNameReg))
             {
                 //默认文件名称正则格式
@@ -292,7 +287,7 @@ namespace AutoUpdater
                 Regex rgx = new Regex(applictionNameReg, RegexOptions.IgnoreCase);
                 if (!rgx.IsMatch(application))
                 {
-                    MessageBox.Show("本地更新配置application节点未设置，无法执行更新程序");
+                    MessageBox.Show(CodeTextentBlock.LocalUpdaterConfigApplicationNodeIsEmpty);
                     return false;
                 }
                 applicationName = rgx.Match(application).Groups[1].Value;
@@ -300,7 +295,7 @@ namespace AutoUpdater
             catch (Exception ex)
             {
                 LogHelper.Write(ex);
-                MessageBox.Show("本地更新配置application_exe_file_name_reg节点设置异常，无法执行更新程序");
+                MessageBox.Show(CodeTextentBlock.LocalUpdaterConfigNameRegNodeIsException);
                 return false;
             }
             return true;
@@ -308,8 +303,12 @@ namespace AutoUpdater
 
         /// <summary>
         /// 关闭当前更新exe,执行实例exe 
+        /// close current updater application,run the final application
         /// </summary>
-        /// <returns>true:更新成功,false:更新失败</returns>
+        /// <returns>
+        /// true:更新成功,false:更新失败
+        /// true:udpate successfully,false:update failed
+        /// </returns>
         private bool UpdaterClose()
         {
             try
@@ -330,20 +329,22 @@ namespace AutoUpdater
                 return false;
             }
             //关闭当前更新程序
+            //close current updater application
             Application.Exit();
             return true;
         }
 
         /// <summary>
         /// 执行更新
+        /// run update
         /// </summary>
         private void UpdaterStart()
         {
-            string filepath = GetConfigValue("FilePath") + "/";
+            string filepath = XmlHelper.GetConfigValue("FilePath") + "/";
             float tempf;
             this.downWebClient.DownloadProgressChanged += delegate (object wcsender, DownloadProgressChangedEventArgs ex)
             {
-                this.label2.Text = string.Format(CultureInfo.InvariantCulture, "正在下载:{0}  [ {1}/{2} ]", new object[]
+                label2.Text = string.Format(CultureInfo.InvariantCulture, CodeTextentBlock.Dowloading + ":{0}  [ {1}/{2} ]", new object[]
                 {
                     fileName,
                     ConvertSize(ex.BytesReceived),
@@ -373,7 +374,7 @@ namespace AutoUpdater
                     }
                     else
                     {
-                        SetConfigValue("up_date", GetTheLastUpdateTime());
+                        XmlHelper.SetConfigValue("up_date", GetTheLastUpdateTime());
                         UpdaterClose();
                     }
                 }
@@ -396,7 +397,7 @@ namespace AutoUpdater
 
         private static void UpdateList()
         {
-            string filepath = GetConfigValue("FilePath") + "/";
+            string filepath = XmlHelper.GetConfigValue("FilePath") + "/";
             string xmlPath = serverUpdateHttpAddress + filepath + "AutoUpdater.xml"; //更新的xml所在的服务器全路径
             WebClient wc = new WebClient();
             DataSet ds = new DataSet();
@@ -426,9 +427,16 @@ namespace AutoUpdater
 
         /// <summary>
         /// 获取zip文件的大小
+        /// fetch zip file's size
         /// </summary>
-        /// <param name="filePath">服务器文件路径</param>
-        /// <returns>zip文件的大小</returns>
+        /// <param name="filePath">
+        /// 服务器文件路径
+        /// server file path
+        /// </param>
+        /// <returns>
+        /// zip文件的大小
+        /// zip file's size
+        /// </returns>
         private static long GetUpdateSize(string filePath)
         {
             long len = 0L;
@@ -463,11 +471,11 @@ namespace AutoUpdater
         {
             try
             {
-                string filepath = GetConfigValue("FilePath") + "/";
+                string filepath = XmlHelper.GetConfigValue("FilePath") + "/";
                 num++;
                 fileName = fileNames[arry];
                 this.label1.Text = string.Format(
-                    CultureInfo.InvariantCulture, "更新进度 {0}/{1}  [ {2} ]",
+                    CultureInfo.InvariantCulture, CodeTextentBlock.UpdaterProgress + " {0}/{1}  [ {2} ]",
                     new object[] { num, count, ConvertSize(size) });
                 this.progressBar2.Value = 0;
                 this.downWebClient.DownloadFileAsync(
@@ -482,10 +490,20 @@ namespace AutoUpdater
 
         /// <summary>
         /// 把zip文件解压缩
+        /// uncompress the zip file
         /// </summary>
-        /// <param name="fileToUpZip">获取本地zip文件的位置 start_path + "\\" + LabelPrint_AutoUpdater + "/" + LabelPrint.zip</param>
-        /// <param name="zipedFolder">存放在本地zip的所在文件夹 start_path + "\\"</param>
-        /// <param name="password">""</param>
+        /// <param name="fileToUpZip">
+        /// 本地zip文件的位置 
+        /// local zip file's position 
+        /// </param>
+        /// <param name="zipedFolder">
+        /// 存放在本地zip的所在文件夹 start_path + "\\"
+        /// the folder for saving the zip file
+        /// </param>
+        /// <param name="password">
+        /// 解压密码
+        /// uncompress password(if not existed,then empty parameter is okay)
+        /// </param>
         public static void UnZip(string fileToUpZip, string zipedFolder, string password)
         {
             if (File.Exists(fileToUpZip))
@@ -563,13 +581,19 @@ namespace AutoUpdater
 
         /// <summary>
         /// 获取服务器对比的更新时间
+        /// fetch server's udpated time
         /// </summary>
-        /// <returns>2016-01-01</returns>
+        /// <returns>
+        /// 服务器端时间
+        /// server's udpated time
+        /// </returns>
         public static string GetTheLastUpdateTime()
         {
             //获取服务器xml配置路径
+            //fetch server xml config file path
             string filepath = XmlHelper.GetConfigValue("ServerXmlUrl");
             //防止有些路径加了反斜杠，有的配置又没有添加，导致重复添加
+            //forbid repeating insert slash into the path
             filepath = serverUpdateHttpAddress.TrimEnd('/') + "/" + XmlHelper.GetConfigValue("FilePath") + "/" + filepath;
             string LastUpdateTime = string.Empty;
             try
