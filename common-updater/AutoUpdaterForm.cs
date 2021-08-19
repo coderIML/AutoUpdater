@@ -185,7 +185,7 @@ namespace AutoUpdater
                 }
                 catch (Exception ex)
                 {
-                    HelperLog.Write(ex);
+                    LogHelper.Write(ex);
                     Close();
                     return;
                 }
@@ -220,7 +220,7 @@ namespace AutoUpdater
                 }
                 catch (Exception ex)
                 {
-                    HelperLog.Write(ex);
+                    LogHelper.Write(ex);
                     MessageBox.Show("updater.xml格式非法，无法加载!");
                     document = null;
                     return false;
@@ -236,7 +236,7 @@ namespace AutoUpdater
             }
             catch (Exception ex)
             {
-                HelperLog.Write(ex);
+                LogHelper.Write(ex);
                 MessageBox.Show("加载更新程序ICON文件异常!");
                 return false;
             }
@@ -248,26 +248,26 @@ namespace AutoUpdater
                 return false;
             }
             //服务器的更新时间
-            string thePreUpdateDate = GetTheLastUpdateTime();
-            if (string.IsNullOrEmpty(thePreUpdateDate))
+            theServerUpdateDate = GetTheLastUpdateTime();
+            if (string.IsNullOrEmpty(theServerUpdateDate))
             {
                 MessageBox.Show("服务器更新时间为空，无法执行更新程序");
                 return false;
             }
             DateTime tmpTime;
-            if (!DateTime.TryParse(thePreUpdateDate, out tmpTime))
+            if (!DateTime.TryParse(theServerUpdateDate, out tmpTime))
             {
                 MessageBox.Show("服务器更新时间格式不正确，无法执行更新程序");
                 return false;
             }
             //当前的更新时间
-            string localUpDate = GetConfigValue("up_date");
-            if (string.IsNullOrEmpty(thePreUpdateDate))
+            thelocalUpdateDate = GetConfigValue("up_date");
+            if (string.IsNullOrEmpty(thelocalUpdateDate))
             {
                 MessageBox.Show("本地更新时间为空，无法执行更新程序");
                 return false;
             }
-            if (!DateTime.TryParse(localUpDate, out tmpTime))
+            if (!DateTime.TryParse(thelocalUpdateDate, out tmpTime))
             {
                 MessageBox.Show("本地更新时间格式不正确，无法执行更新程序");
                 return false;
@@ -299,7 +299,7 @@ namespace AutoUpdater
             }
             catch (Exception ex)
             {
-                HelperLog.Write(ex);
+                LogHelper.Write(ex);
                 MessageBox.Show("本地更新配置application_exe_file_name_reg节点设置异常，无法执行更新程序");
                 return false;
             }
@@ -325,7 +325,7 @@ namespace AutoUpdater
             }
             catch (Exception ex)
             {
-                HelperLog.Write(ex);
+                LogHelper.Write(ex);
                 MessageBox.Show(ex.Message);
                 return false;
             }
@@ -568,9 +568,9 @@ namespace AutoUpdater
         public static string GetTheLastUpdateTime()
         {
             //获取服务器xml配置路径
-            string filepath = GetConfigValue("ServerXmlUrl");
+            string filepath = XmlHelper.GetConfigValue("ServerXmlUrl");
             //防止有些路径加了反斜杠，有的配置又没有添加，导致重复添加
-            filepath = serverUpdateHttpAddress.TrimEnd('/') + "/" + GetConfigValue("FilePath") + "/" + filepath;
+            filepath = serverUpdateHttpAddress.TrimEnd('/') + "/" + XmlHelper.GetConfigValue("FilePath") + "/" + filepath;
             string LastUpdateTime = string.Empty;
             try
             {
@@ -594,57 +594,14 @@ namespace AutoUpdater
             }
             catch (WebException ex)
             {
-                HelperLog.Write(ex);
+                LogHelper.Write(ex);
             }
             catch (Exception ex)
             {
-                HelperLog.Write(ex);
+                LogHelper.Write(ex);
             }
             return LastUpdateTime;
         }
 
-        /// <summary>
-        /// 修改App.Config的值
-        /// </summary>
-        /// <param name="key">config key值</param>
-        /// <param name="value">修改后的value</param>
-        public static void SetConfigValue(string key, string value)
-        {
-            XmlNode xNode; XmlElement xElem1; XmlElement xElem2;
-            xNode = document.SelectSingleNode("//appSettings");
-            xElem1 = (XmlElement)xNode.SelectSingleNode("//add[@key='" + key + "']");
-            if (xElem1 != null) xElem1.SetAttribute("value", value);
-            else
-            {
-                xElem2 = document.CreateElement("add");
-                xElem2.SetAttribute("key", key);
-                xElem2.SetAttribute("value", value);
-                xNode.AppendChild(xElem2);
-            }
-            document.Save(LocalUpdaterFilePath);
-        }
-
-        /// <summary>
-        /// 根据key获取value值
-        /// </summary>
-        /// <param name="appKey">xml key值</param>
-        /// <returns>value</returns>
-        public static string GetConfigValue(string appKey)
-        {
-            XmlElement xmlElement = null;
-            try
-            {
-                XmlNode xmlNode = document.SelectSingleNode("//appSettings");
-                xmlElement = (XmlElement)xmlNode.SelectSingleNode("//add[@key=\"" + appKey + "\"]");
-            }
-            catch (XmlException ex)
-            {
-                MessageBox.Show(ex.Message, "提示");
-            }
-            string result;
-            if (xmlElement != null) result = xmlElement.GetAttribute("value");
-            else result = string.Empty;
-            return result;
-        }
     }
 }

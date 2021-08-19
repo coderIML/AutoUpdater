@@ -8,6 +8,16 @@
 //          2017-02-05 13:23:21 刘少林 创建LogHelper类
 // </copyright>
 //-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+// <copyright open code source file="LogHelper.cs">
+//  Copyright (c)  V1.0.0.0  
+//  creator:   arison
+//  create time:   2021-06-29 10:31:54
+//  function description:   log operater's helper class
+//  history version:
+//          2021-06-29 arison create log operater's helper class
+// </copyright>
+//-----------------------------------------------------------------------
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -22,132 +32,39 @@ namespace AutoUpdater
 {
     /// <summary>
     /// 日志帮助类
+    /// log operater's helper class
     /// </summary>
-    /// <remarks>自定义的日志操作类</remarks>
-    public class HelperLog
+    /// <remarks>
+    /// 自定义的日志操作类,日志保留7天
+    /// customize log operater's class ,and the log file will be saved for seven days
+    /// </remarks>
+    sealed public class LogHelper
     {
-        private const string LogConfigFilePath = "logMode.ini";
-        /// <summary>
-        /// 数据库日志结构
-        /// </summary>
-        public struct DBLogEntity
-        {
-            /// <summary>
-            /// 日志描述
-            /// </summary>
-            public string LogDescription;
-
-            /// <summary>
-            /// 异常对象
-            /// </summary>
-            public Exception ExceptionEntity;
-
-            /// <summary>
-            /// 修改前对象
-            /// </summary>
-            public object BeforeDataObject;
-
-            /// <summary>
-            /// 修改后对象
-            /// </summary>
-            public object AfterDataObject;
-
-            private string platform;
-            /// <summary>
-            /// 所属平台
-            /// </summary>
-            /// <remarks>此模块标志一般配置在特定文件中</remarks>
-            public string PlatForm
-            {
-                get
-                {
-                    if (!string.IsNullOrEmpty(platform))
-                    {
-                        return platform;
-                    }
-                    else
-                    {
-                        string fullPath = Environment.CurrentDirectory + "\\" + LogConfigFilePath;
-                    }
-                    return platform;
-                }
-
-                set
-                {
-                    platform = value;
-                }
-            }
-
-            private string project;
-            /// <summary>
-            /// 所属项目
-            /// </summary>
-            /// <remarks>此模块标志一般配置在特定文件中</remarks>
-            public string Project
-            {
-                get
-                {
-                    if (!string.IsNullOrEmpty(project))
-                    {
-                        return project;
-                    }
-                    else
-                    {
-                        string fullPath = Environment.CurrentDirectory + "\\" + LogConfigFilePath;
-                    }
-                    return project;
-                }
-
-                set
-                {
-                    project = value;
-                }
-            }
-
-            /// <summary>
-            /// 所属模块
-            /// </summary>
-            public string Module;
-
-            /// <summary>
-            /// 所属功能块
-            /// </summary>
-            public string Function;
-
-            /// <summary>
-            /// 操作人
-            /// </summary>
-            public string Operator;
-
-            /// <summary>
-            /// 操作归纳描述
-            /// </summary>
-            public string OpereateSummary;
-
-
-            /// <summary>
-            /// 是否前端系统
-            /// </summary>
-            public bool IsFrontEnd;
-        }
-
-        private HelperLog() { }
+        private LogHelper() { }
 
         /// <summary>
         /// 获取调用方法信息
+        /// get the invoked method information
         /// </summary>
-        /// <returns>方法信息</returns>
+        /// <returns>
+        /// 方法信息
+        /// method information
+        /// </returns>
         private static string GetMethodInfo()
         {
             System.Diagnostics.StackTrace st = new System.Diagnostics.StackTrace();
             //获取调用此日志的方法信息(日志内部调用此方法，所以Frame基数为2开始)
+            //get method information from invoked mehod (inner log method invoked this method,so Frame base number begin 2)
             MethodBase method = st.GetFrame(2).GetMethod();
             StringBuilder builder = new StringBuilder(256);
             //方法名所在命名空间和类
+            //namespace and class contain the method
             builder.AppendFormat("\r\n方法所在命名空间和类:{0}\r\n", method.ReflectedType.FullName);
             //调用此日志方法的方法名称
+            //the method invoke the log method 
             builder.AppendFormat("方法名称:{0}\r\n", method.Name);
             //获取方法参数签名
+            // get the method's paramters signature
             ParameterInfo[] parameters = method.GetParameters();
             foreach (ParameterInfo info in parameters)
             {
@@ -158,16 +75,27 @@ namespace AutoUpdater
 
         /// <summary>
         /// 获取实体信息
+        /// get the entity information
         /// </summary>
-        /// <typeparam name="T">实体类型</typeparam>
-        /// <param name="entity">实体对象</param>
-        /// <returns>实体信息</returns>
+        /// <typeparam name="T">
+        /// 实体类型
+        /// entity type
+        /// </typeparam>
+        /// <param name="entity">
+        /// 实体对象
+        /// entity object
+        /// </param>
+        /// <returns>
+        /// 实体信息
+        /// entity information
+        /// </returns>
         private static string GetEntityInfo<T>(T entity) where T : class, new()
         {
             string entityInfo = string.Empty;
             using (StringWriter sw = new StringWriter())
             {
                 //创建XML命名空间
+                //create xml namespace
                 XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
                 ns.Add("", "");
                 try
@@ -186,12 +114,28 @@ namespace AutoUpdater
 
         /// <summary>
         /// 记录实体日志
+        /// record entity log
         /// </summary>
-        /// <typeparam name="T">实体类型</typeparam>
-        /// <param name="entity">实体对象</param>
-        /// <param name="content">备注</param>
-        /// <param name="type">日志类型</param>
-        /// <remarks>将对象序列化记录到文本日志中去,方便后期查询日志</remarks>
+        /// <typeparam name="T">
+        /// 实体类型
+        /// entity type
+        /// </typeparam>
+        /// <param name="entity">
+        /// 实体对象
+        /// entity object
+        /// </param>
+        /// <param name="content">
+        /// 备注
+        /// note
+        /// </param>
+        /// <param name="type">
+        /// 日志类型
+        /// log type
+        /// </param>
+        /// <remarks>
+        /// 将对象序列化记录到文本日志中去,方便后期查询日志
+        /// let the serial object save into text log content,and convenient query the log in the future
+        /// </remarks>
         public static void Write<T>(T entity, string content, LogTypes type = LogTypes.Other) where T : class, new()
         {
 
@@ -200,10 +144,20 @@ namespace AutoUpdater
 
         /// <summary>
         /// 记录实体日志
+        /// record entity log
         /// </summary>
-        /// <typeparam name="T">实体类型</typeparam>
-        /// <param name="entity">实体对象</param>
-        /// <param name="type">日志类型</param>
+        /// <typeparam name="T">
+        /// 实体类型
+        /// entity type
+        /// </typeparam>
+        /// <param name="entity">
+        /// 实体对象
+        /// entity object
+        /// </param>
+        /// <param name="type">
+        /// 日志类型
+        /// log type
+        /// </param>
         public static void Write<T>(T entity, LogTypes type = LogTypes.Other) where T : class, new()
         {
             Write(GetEntityInfo(entity), GetMethodInfo(), null, type, "");
@@ -211,11 +165,24 @@ namespace AutoUpdater
 
         /// <summary>
         /// 记录实体日志
+        /// record entity log
         /// </summary>
-        /// <typeparam name="T">实体类型</typeparam>
-        /// <param name="entity">实体对象</param>
-        /// <param name="exception">异常对象</param>
-        /// <param name="type">日志类型</param>
+        /// <typeparam name="T">
+        /// 实体类型
+        /// entity type
+        /// </typeparam>
+        /// <param name="entity">
+        /// 实体对象
+        /// entity object
+        /// </param>
+        /// <param name="exception">
+        /// 异常对象
+        /// exception object
+        /// </param>
+        /// <param name="type">
+        /// 日志类型
+        /// log type
+        /// </param>
         public static void Write<T>(T entity, Exception exception, LogTypes type = LogTypes.Exception) where T : class, new()
         {
             Write(GetEntityInfo(entity), GetMethodInfo(), exception, type, "");
@@ -223,9 +190,16 @@ namespace AutoUpdater
 
         /// <summary>
         /// 日志记录
+        /// save the log content into log file
         /// </summary>
-        /// <param name="content">日志内容</param>
-        /// <param name="type">日志类型</param>
+        /// <param name="content">
+        /// 日志内容
+        /// log content
+        /// </param>
+        /// <param name="type">
+        /// 日志类型
+        /// log content
+        /// </param>
         public static void Write(string content, LogTypes type = LogTypes.Other)
         {
             Write(content, GetMethodInfo(), null, type, "");
@@ -233,10 +207,20 @@ namespace AutoUpdater
 
         /// <summary>
         /// 日志记录
+        /// save the log content into log file
         /// </summary>
-        /// <param name="exception">异常对象</param>
-        /// <param name="content">备注内容</param>
-        /// <param name="type">日志类型</param>
+        /// <param name="exception">
+        /// 异常对象
+        /// exception object
+        /// </param>
+        /// <param name="content">
+        /// 备注内容
+        /// note content
+        /// </param>
+        /// <param name="type">
+        /// 日志类型
+        /// log type
+        /// </param>
         public static void Write(Exception exception, string content, LogTypes type = LogTypes.Exception)
         {
             Write(content, GetMethodInfo(), exception, type, "");
@@ -244,9 +228,16 @@ namespace AutoUpdater
 
         /// <summary>
         /// 日志记录
+        /// save the log content into log file
         /// </summary>
-        /// <param name="exception">异常对象</param>
-        /// <param name="type">日志类型</param>
+        /// <param name="exception">
+        /// 异常对象
+        /// exception object
+        /// </param>
+        /// <param name="type">
+        /// 日志类型
+        /// log type
+        /// </param>
         public static void Write(Exception exception, LogTypes type = LogTypes.Exception)
         {
             Write(string.Empty, GetMethodInfo(), exception, type, "");
@@ -254,17 +245,34 @@ namespace AutoUpdater
 
         /// <summary>
         /// 系统日志写入
+        /// save the log content into log file
         /// </summary>
-        /// <param name="content">自定义日志内容</param>
-        /// <param name="methodInfo">日志发生所在方法信息</param>
-        /// <param name="exception">异常日志</param>
-        /// <param name="type">日志类型</param>
-        /// <param name="savePath">日志保存路径(默认存在应用程序所在文件夹下),后期扩展可用于网络传输日志操作</param>
+        /// <param name="content">
+        /// 自定义日志内容
+        /// customize log content
+        /// </param>
+        /// <param name="methodInfo">
+        /// 日志发生所在方法信息
+        /// log will be build in the method
+        /// </param>
+        /// <param name="exception">
+        /// 异常日志
+        /// exception object
+        /// </param>
+        /// <param name="type">
+        /// 日志类型
+        /// log type
+        /// </param>
+        /// <param name="savePath">
+        /// 日志保存路径(默认存在应用程序所在文件夹下),后期扩展可用于网络传输日志操作
+        /// the path for the log(by default it will be saved the path of applicaiton),then it can be transported in the internet
+        /// </param>
         public static void Write(string content, string methodInfo, Exception exception, LogTypes type, string savePath)
         {
             if (!string.IsNullOrEmpty(content) || exception != null)
             {
                 //不存在自定义日志内容和异常对象时候无需写入日志文件
+                //if exception is not exist or log content is empty,the Write method will be not runned
                 string timeString = DateTime.Now.ToString();
                 StringBuilder append = new StringBuilder();
                 append.AppendFormat("时间:{0}\r\n", timeString);
@@ -288,19 +296,31 @@ namespace AutoUpdater
 
         /// <summary>
         /// 写入日志
+        /// save the log content
         /// </summary>
-        /// <param name="info">日志内容</param>
-        /// <param name="type">日志类型</param>
-        /// <param name="savePath">日志保存路径(默认存在应用程序所在文件夹下),后期扩展可用于网络传输日志操作</param>
+        /// <param name="info">
+        /// 日志内容
+        /// log content
+        /// </param>
+        /// <param name="type">
+        /// 日志类型
+        /// log type
+        /// </param>
+        /// <param name="savePath">
+        /// 日志保存路径(默认存在应用程序所在文件夹下),后期扩展可用于网络传输日志操作
+        /// the path for the log(by default it will be saved the path of applicaiton),then it can be transported in the internet
+        /// </param>
         private static void WriteLog(string info, LogTypes type, string savePath = "")
         {
             string directory = string.Empty;
             try
             {
                 //日志可通过传入绝对路径保存
+                //log can be saved into the absolute path
                 if (string.IsNullOrEmpty(savePath))
                 {
                     //获取当前执行程序所在绝对路径(不包最后斜杠"\"及后续执行文件名称等)
+                    //get the current application's path(it can not contain the slash and the executable file name etc.)
                     directory = System.AppDomain.CurrentDomain.BaseDirectory;
                     if (string.IsNullOrEmpty(directory))
                     {
@@ -308,35 +328,43 @@ namespace AutoUpdater
                         {
                             //网站类请求日志存储
                             //WCF部署到IIS上的时候，HttpContext.Current还是null
+                            //website's log will be saved by special
+                            //when WCF service is deployed on the IIS server,HttpContext.Current is null too!
                             directory = HttpContext.Current.Server.MapPath("~");
                         }
                         if (directory == string.Empty)
                         {
-                            directory = System.Environment.CurrentDirectory;
+                            directory = Environment.CurrentDirectory;
                         }
                     }
                 }
                 //加入下级log文件夹,避免程序异常导致删除其他文件夹
+                // create the log folder,avoid delete other important file folder by the speical exception.
                 string rootLogPath = directory + "\\log\\";
                 //获取已当前天(年月日)命名的文件夹
+                //get current day(year month day) name the log folder
                 string logPath = directory + "\\log\\" + DateTime.Now.Date.ToString("yyyy-MM-dd");
                 DirectoryInfo directInfo = null;
                 //检测log下文件夹超过7个则删除最早的文件夹内容
                 //原则上只保留7天的异常日志
+                //if the log folder contain seven folders or more,the application will delete the primary folders
+                //
                 if (Directory.Exists(rootLogPath))
                 {
                     directInfo = new DirectoryInfo(rootLogPath);
                     //获取log文件夹下的文件夹数量
+                    //get the file folder's count in the log folder
                     DirectoryInfo[] directorys = directInfo.GetDirectories();
                     List<DirectoryInfo> willRemoveList = new List<DirectoryInfo>();
                     if (directorys.Length > 30)
                     {
-                        //Array.Sort(
                         //将log文件夹下的文件夹按时间降序排序
+                        //let the folders are sorted by descending time in the log folder
                         Array.Sort(directorys, new DirectoryInfoComparer());
                         for (int i = 0; i < directorys.Length - 30; i++)
                         {
                             //添加待删除的文件夹
+                            //add the folders that will be deleted quickly
                             willRemoveList.Add(directorys[i]);
                         }
                         if (willRemoveList.Count > 0)
@@ -344,6 +372,7 @@ namespace AutoUpdater
                             for (int i = 0; i < willRemoveList.Count; i++)
                             {
                                 //删除文件夹及以下文件
+                                //delete the folders and the files in the folders
                                 willRemoveList[i].Delete(true);
                             }
                         }
@@ -351,8 +380,8 @@ namespace AutoUpdater
                 }
                 if (!Directory.Exists(logPath))
                 {
-
                     //以当天日期生产的文件夹不存在则重新创建此文件夹
+                    //if there are not exist the current day folder,then rebuild the folder by the current day
                     directInfo = Directory.CreateDirectory(logPath);
                 }
                 else
@@ -360,28 +389,15 @@ namespace AutoUpdater
                     directInfo = new DirectoryInfo(logPath);
                 }
                 //获取当天日期文件夹下的所有文件
+                //get all of the files from the current date folder
                 FileInfo[] files = directInfo.GetFiles();
                 if (files.Length >= 100)
                 {
                     //单个文件夹下不允许日志文件超过100个
+                    //single folder refuse contain 100 files more!
                     return;
                 }
                 string filePath = string.Empty;
-                /*
-                //获取异常日志文件清单
-                IEnumerable<FileInfo> exFiles = files.Where(a => a.Name.IndexOf(LogTypes.Exception.ToString(), StringComparison.CurrentCultureIgnoreCase) >= 0);
-                //获取异常日志文件数量
-                int exCount = exFiles.Count();
-                //获取其他日志文件清单
-                IEnumerable<FileInfo> otFiles = files.Where(a => a.Name.IndexOf(LogTypes.Other.ToString(), StringComparison.CurrentCultureIgnoreCase) >= 0);
-                //获取其他日志文件数量
-                int otCount = otFiles.Count();
-
-                //获取特殊日志文件清单
-                IEnumerable<FileInfo> spFiles = files.Where(a => a.Name.IndexOf(LogTypes.Other.ToString(), StringComparison.CurrentCultureIgnoreCase) >= 0);
-                //获取其他日志文件数量
-                int otCount = otFiles.Count();
-                */
                 FileInfo[] logFiles = new FileInfo[files.Length];
                 int index = 0;
                 foreach (FileInfo file in files)
@@ -391,44 +407,22 @@ namespace AutoUpdater
                         logFiles[index++] = file;
                     }
                 }
-                //获取日志文件清单
-                //获取日志文件数量
                 int logCount = index;
-
-
                 //获取日志类型名称
+                //get log type name
                 string typeName = type.ToString();
-                /*
-                if (type == LogTypes.Exception)
-                {
-
-                    //对于已有异常日志文件和没有异常日志文件的路径生成逻辑
-                    filePath = logPath + @"\" + typeName + "-" + (exCount > 0 ? (exCount - 1) : 0) + ".txt";
-                }
-                else
-                {
-                    //对于已有其他日志文件和没有其他日志文件的路径生成逻辑
-                    filePath = logPath + @"\" + typeName + "-" + (otCount > 0 ? (otCount - 1) : 0) + ".txt";
-                }*/
 
                 filePath = logPath + @"\" + typeName + "-" + (logCount > 0 ? (logCount - 1) : 0) + ".txt";
 
                 //指定文件路径下的文件已存在，则根据文件大小情况，进行追加日志
+                //if the file existed in the special path,then it will append the log content,if the file size is little！
                 if (File.Exists(filePath))
                 {
                     FileInfo f = new FileInfo(filePath);
                     //超过1M的日志文件重新生成日志文件
+                    //it will create another log file,if currrent file's size more than 1M
                     if (f.Length >= 1048576)
                     {
-                        /*
-                        if (type == LogTypes.Exception)
-                        {
-                            filePath = logPath + @"\" + typeName + "-" + exCount + ".txt";
-                        }
-                        else
-                        {
-                            filePath = logPath + @"\" + typeName + "-" + otCount + ".txt";
-                        }*/
                         filePath = logPath + @"\" + typeName + "-" + logCount + ".txt";
                         FileStream stream = File.Open(filePath, FileMode.OpenOrCreate, FileAccess.Write);
                         stream.Seek(0, SeekOrigin.Begin);
@@ -456,16 +450,19 @@ namespace AutoUpdater
             }
             catch
             {
-                //本异常应该有记录到本地程序ini文件中,至少是记录异常的次数
-                //ini文件夹即为键值对值，以便此异常能够被识别到，是否过于频繁!
+                
             }
         }
     }
 
     /// <summary>
     /// 用于比较DirectoryInfo类型对象的比较类
+    /// the comparer class (it will be used to compare two directoryinfo classes)
     /// </summary>
-    /// <remarks>只用于比较DirectoryInfo对象</remarks>
+    /// <remarks>
+    /// 只用于比较DirectoryInfo对象
+    /// just only compare two directoryinfo object
+    /// </remarks>
     public class DirectoryInfoComparer : IComparer
     {
         int IComparer.Compare(object x, object y)
@@ -478,17 +475,20 @@ namespace AutoUpdater
 
     /// <summary>
     /// 记录日志类型
+    /// log type enum
     /// </summary>
     public enum LogTypes
     {
         /// <summary>
         /// 异常日志
+        /// exception log
         /// </summary>
         [Description("异常日志")]
         Exception = 0x0,
 
         /// <summary>
         /// 特殊日志
+        /// special log
         /// </summary>
         [Description("特殊日志")]
         Special = 0x02,
@@ -501,24 +501,28 @@ namespace AutoUpdater
 
         /// <summary>
         /// 登陆注销
+        /// login and logout log
         /// </summary>
         [Description("登陆注销")]
         Login = 0x08,
 
         /// <summary>
         /// 数据变更
+        /// data change log
         /// </summary>
         [Description("数据变更")]
         DataChange = 0x16,
 
         /// <summary>
         /// 其他日志
+        /// others' log
         /// </summary>
         [Description("其他日志")]
         Other = 0x32,
 
         /// <summary>
         /// 普通错误
+        /// normal error log
         /// </summary>
         [Description("普通错误")]
         Fault = 0x64,
